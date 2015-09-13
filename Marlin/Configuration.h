@@ -380,7 +380,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
 
 //// MOVEMENT SETTINGS
 #define NUM_AXIS 4 // The axis order in all axis related arrays is X, Y, Z, E
-#define HOMING_FEEDRATE {7600, 7600, 50, 0}  // set the homing speeds (mm/min)
+#define HOMING_FEEDRATE {7600, 7600, 100, 0}  // set the homing speeds (mm/min)
 
 // default settings
 
@@ -393,7 +393,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
 
 // Lansing Makers Netowork Laser Cutter
 #define DEFAULT_AXIS_STEPS_PER_UNIT   {157.4802,157.4802,3200}  // default steps per unit for Ultimaker
-#define DEFAULT_MAX_FEEDRATE          {7600, 7600, 50, 25}    // (mm/sec)
+#define DEFAULT_MAX_FEEDRATE          {7600, 7600, 100, 25}    // (mm/sec)
 #define DEFAULT_MAX_ACCELERATION      {2600,2600,2.5,2.5}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
 
 #define DEFAULT_ACCELERATION          2000    // X, Y, Z and E max acceleration in mm/s^2 for printing moves
