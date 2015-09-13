@@ -65,13 +65,14 @@ static void lcd_sdcard_menu();
 	static void laser_test_fire(uint8_t power, uint8_t dwell);
 	static void laser_set_focus(float f_length);
 	static void action_laser_focus_custom();
-	static void action_laser_focus_1mm();
-	static void action_laser_focus_2mm();
-	static void action_laser_focus_3mm();
-	static void action_laser_focus_4mm();
-	static void action_laser_focus_5mm();
-	static void action_laser_focus_6mm();
-	static void action_laser_focus_7mm();
+	static void action_laser_focus_1();
+	static void action_laser_focus_2();
+	static void action_laser_focus_3();
+	static void action_laser_focus_4();
+	static void action_laser_focus_5();
+	static void action_laser_focus_6();
+	static void action_laser_focus_7();
+	static void action_laser_focus_8();
 	static void action_laser_test_20_50ms();
 	static void action_laser_test_20_100ms();
 	static void action_laser_test_90_50ms();
@@ -758,7 +759,7 @@ static void lcd_laser_menu()
 {
 	START_MENU();
 	MENU_ITEM(back, MSG_MAIN, lcd_main_menu);
-	MENU_ITEM(submenu, "Set Focus", lcd_laser_focus_menu);
+	MENU_ITEM(submenu, "Set Material Thickness", lcd_laser_focus_menu);
 	MENU_ITEM(submenu, "Test Fire", lcd_laser_test_fire_menu);
 	#ifdef LASER_PERIPHERALS
 	if (laser_peripherals_ok()) {
@@ -820,47 +821,44 @@ float focalLength = 0;
 static void lcd_laser_focus_menu() {
 	START_MENU();
 	MENU_ITEM(back, "Laser Functions", lcd_laser_menu);
-	MENU_ITEM(function, "1mm", action_laser_focus_1mm);
-	MENU_ITEM(function, "2mm", action_laser_focus_2mm);
-	MENU_ITEM(function, "3mm - 1/8in", action_laser_focus_3mm);
-	MENU_ITEM(function, "4mm", action_laser_focus_4mm);
-	MENU_ITEM(function, "5mm", action_laser_focus_5mm);
-	MENU_ITEM(function, "6mm - 1/4in", action_laser_focus_6mm);
-	MENU_ITEM(function, "7mm", action_laser_focus_7mm);
-	MENU_ITEM_EDIT_CALLBACK(float32, "Custom", &focalLength, 0, LASER_FOCAL_HEIGHT, action_laser_focus_custom);
+	MENU_ITEM(function, "2mm",              action_laser_focus_1);
+	MENU_ITEM(function, "3/32in - 2.38mm",  action_laser_focus_2);
+	MENU_ITEM(function, "3mm",              action_laser_focus_3);
+	MENU_ITEM(function, "1/8in - 3.175mm",  action_laser_focus_4);
+	MENU_ITEM(function, "4mm",              action_laser_focus_5);
+	MENU_ITEM(function, "3/16in - 4.75mm",  action_laser_focus_6);
+	MENU_ITEM(function, "6mm",              action_laser_focus_7);
+	MENU_ITEM(function, "1/4in - 6.35mm",   action_laser_focus_8);
+	MENU_ITEM_EDIT_CALLBACK(float32, "Custom", &focalLength, 0, 50, action_laser_focus_custom);
 	END_MENU();
 }
 
 static void action_laser_focus_custom() {
 	laser_set_focus(focalLength);
 }
-
-static void action_laser_focus_1mm() {
-	laser_set_focus(1);
-}
-
-static void action_laser_focus_2mm() {
+static void action_laser_focus_1() {
 	laser_set_focus(2);
 }
-
-static void action_laser_focus_3mm() {
+static void action_laser_focus_2() {
+	laser_set_focus(2.38);
+}
+static void action_laser_focus_3() {
 	laser_set_focus(3);
 }
-
-static void action_laser_focus_4mm() {
+static void action_laser_focus_4() {
+	laser_set_focus(3.175);
+}
+static void action_laser_focus_5() {
 	laser_set_focus(4);
 }
-
-static void action_laser_focus_5mm() {
-	laser_set_focus(5);
+static void action_laser_focus_6() {
+	laser_set_focus(4.75);
 }
-
-static void action_laser_focus_6mm() {
+static void action_laser_focus_7() {
 	laser_set_focus(6);
 }
-
-static void action_laser_focus_7mm() {
-	laser_set_focus(7);
+static void action_laser_focus_8() {
+	laser_set_focus(6.35);
 }
 static void laser_set_focus(float f_length) {
 	if (!has_axis_homed[Z_AXIS]) {
