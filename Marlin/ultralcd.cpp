@@ -74,8 +74,8 @@ static void lcd_sdcard_menu();
 	static void action_laser_focus_7mm();
 	static void action_laser_test_20_50ms();
 	static void action_laser_test_20_100ms();
-	static void action_laser_test_100_50ms();
-	static void action_laser_test_100_100ms();
+	static void action_laser_test_90_50ms();
+	static void action_laser_test_90_100ms();
 	static void action_laser_test_warm();
 	static void action_laser_acc_on();
 	static void action_laser_acc_off();
@@ -384,11 +384,11 @@ static void lcd_prepare_menu()
 #endif
     MENU_ITEM(gcode, MSG_DISABLE_STEPPERS, PSTR("M84"));
     MENU_ITEM(gcode, "Enable Steppers", PSTR("M17"));
-#ifdef LASER
-    MENU_ITEM(gcode, MSG_AUTO_HOME, PSTR("G28 X Y F2000"));
-#else
+//#ifdef LASER
+//   MENU_ITEM(gcode, MSG_AUTO_HOME, PSTR("G28 X Y F2000"));
+//#else
     MENU_ITEM(gcode, MSG_AUTO_HOME, PSTR("G28"));
-#endif
+//#endif
     MENU_ITEM(gcode, MSG_SET_ORIGIN, PSTR("G92 X0 Y0 Z0"));
 #ifndef LASER
     MENU_ITEM(function, MSG_PREHEAT_PLA, lcd_preheat_pla);
@@ -774,8 +774,8 @@ static void lcd_laser_test_fire_menu() {
 	MENU_ITEM(back, "Laser Functions", lcd_laser_menu);
 	MENU_ITEM(function, " 20%  50ms", action_laser_test_20_50ms);
 	MENU_ITEM(function, " 20% 100ms", action_laser_test_20_100ms);
-	MENU_ITEM(function, "100%  50ms", action_laser_test_100_50ms);
-	MENU_ITEM(function, "100% 100ms", action_laser_test_100_100ms);
+	MENU_ITEM(function, "100%  50ms", action_laser_test_90_50ms);
+	MENU_ITEM(function, "100% 100ms", action_laser_test_90_100ms);
 	MENU_ITEM(function, "Warm-up Laser 2sec", action_laser_test_warm);
 	END_MENU();
 }
@@ -797,12 +797,12 @@ static void action_laser_test_20_100ms() {
 	laser_test_fire(20, 100);
 }
 
-static void action_laser_test_100_50ms() {
-	laser_test_fire(100, 50);
+static void action_laser_test_90_50ms() {
+	laser_test_fire(90, 50);
 }
 
-static void action_laser_test_100_100ms() {
-	laser_test_fire(100, 100);
+static void action_laser_test_90_100ms() {
+	laser_test_fire(90, 100);
 }
 
 static void action_laser_test_warm() {
@@ -863,13 +863,13 @@ static void action_laser_focus_7mm() {
 }
 static void laser_set_focus(float f_length) {
 	if (!has_axis_homed[Z_AXIS]) {
-		enquecommand_P(PSTR("G28 Z F150"));
+		enquecommand_P(PSTR("G28 Z F50"));
 	}
 	focalLength = f_length;
 	float focus = LASER_FOCAL_HEIGHT - f_length;
 	char cmd[20];
 
-	sprintf_P(cmd, PSTR("G0 Z%s F150"), ftostr52(focus));
+	sprintf_P(cmd, PSTR("G0 Z%s F50"), ftostr52(focus));
 	enquecommand(cmd);
 }
 #endif
