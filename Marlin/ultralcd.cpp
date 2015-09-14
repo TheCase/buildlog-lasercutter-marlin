@@ -275,6 +275,7 @@ static void lcd_main_menu()
     MENU_ITEM(back, MSG_WATCH, lcd_status_screen);
 	#ifdef LASER
     	if (!(movesplanned() || IS_SD_PRINTING)) {
+    		MENU_ITEM(submenu, "Laser Prep", lcd_laser_focus_menu);
     		MENU_ITEM(submenu, "Laser Functions", lcd_laser_menu);
     	}
 	#endif
@@ -380,23 +381,24 @@ static void lcd_prepare_menu()
 {
     START_MENU();
     MENU_ITEM(back, MSG_MAIN, lcd_main_menu);
-#ifdef SDSUPPORT
-    //MENU_ITEM(function, MSG_AUTOSTART, lcd_autostart_sd);
-#endif
-    MENU_ITEM(gcode, MSG_DISABLE_STEPPERS, PSTR("M84"));
-    MENU_ITEM(gcode, "Enable Steppers", PSTR("M17"));
+//#ifdef SDSUPPORT
+//    MENU_ITEM(function, MSG_AUTOSTART, lcd_autostart_sd);
+//#endif
+   MENU_ITEM(gcode, MSG_SET_ORIGIN, PSTR("G92 X0 Y0 Z0"));
 #ifdef LASER
    MENU_ITEM(gcode, MSG_AUTO_HOME, PSTR("G28 X Y F2000"));
    MENU_ITEM(gcode, "Home Z", PSTR("G28 Z F100"));
 #else
     MENU_ITEM(gcode, MSG_AUTO_HOME, PSTR("G28"));
 #endif
-    MENU_ITEM(gcode, MSG_SET_ORIGIN, PSTR("G92 X0 Y0 Z0"));
 #ifndef LASER
     MENU_ITEM(function, MSG_PREHEAT_PLA, lcd_preheat_pla);
     MENU_ITEM(function, MSG_PREHEAT_ABS, lcd_preheat_abs);
     MENU_ITEM(function, MSG_COOLDOWN, lcd_cooldown);
 #endif
+    MENU_ITEM(gcode, MSG_DISABLE_STEPPERS, PSTR("M84"));
+    MENU_ITEM(gcode, "Enable Steppers", PSTR("M17"));
+    MENU_ITEM(submenu, MSG_MOVE_AXIS, lcd_move_menu);
 #if PS_ON_PIN > -1
     if (powersupply)
     {
@@ -405,7 +407,6 @@ static void lcd_prepare_menu()
         MENU_ITEM(gcode, MSG_SWITCH_PS_ON, PSTR("M80"));
     }
 #endif
-    MENU_ITEM(submenu, MSG_MOVE_AXIS, lcd_move_menu);
     END_MENU();
 }
 
@@ -759,7 +760,7 @@ static void lcd_laser_menu()
 {
 	START_MENU();
 	MENU_ITEM(back, MSG_MAIN, lcd_main_menu);
-	MENU_ITEM(submenu, "Set Material Thickness", lcd_laser_focus_menu);
+//	MENU_ITEM(submenu, "Set Thickness", lcd_laser_focus_menu);
 	MENU_ITEM(submenu, "Test Fire", lcd_laser_test_fire_menu);
 	#ifdef LASER_PERIPHERALS
 	if (laser_peripherals_ok()) {
@@ -820,7 +821,7 @@ static void laser_test_fire(uint8_t power, uint8_t dwell) {
 float focalLength = 0;
 static void lcd_laser_focus_menu() {
 	START_MENU();
-	MENU_ITEM(back, "Laser Functions", lcd_laser_menu);
+	MENU_ITEM(back, "Main Menu", lcd_main_menu);
 	MENU_ITEM(function, "2mm",              action_laser_focus_1);
 	MENU_ITEM(function, "3/32in - 2.38mm",  action_laser_focus_2);
 	MENU_ITEM(function, "3mm",              action_laser_focus_3);
@@ -862,7 +863,7 @@ static void action_laser_focus_8() {
 }
 static void laser_set_focus(float f_length) {
 	if (!has_axis_homed[Z_AXIS]) {
-		enquecommand_P(PSTR("G28 Z F100"));
+		enquecommand_P(PSTR("G28 Z F100")); // home Z
 	}
 	focalLength = f_length;
 //	float focus = LASER_FOCAL_HEIGHT - f_length;
@@ -871,6 +872,11 @@ static void laser_set_focus(float f_length) {
 
 	sprintf_P(cmd, PSTR("G0 Z%s F100"), ftostr52(focus));
 	enquecommand(cmd);
+	enquecommand_P(PSTR("G28 X Y F2000")); // home X/Y
+	enquecommand_P(PSTR("G0 Y16 F2000"));  // move to cut area
+	enquecommand_P(PSTR("M18"));           // disable motors
+	enquecommand_P(PSTR("G92 X0 Y0 Z0"));  // set as origin
+
 }
 #endif
 #if SDCARDDETECT == -1
