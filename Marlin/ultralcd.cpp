@@ -862,20 +862,22 @@ static void action_laser_focus_8() {
 	laser_set_focus(6.35);
 }
 static void laser_set_focus(float f_length) {
-	if (!has_axis_homed[Z_AXIS]) {
-		enquecommand_P(PSTR("G28 Z F100")); // home Z
-	}
+//	if (!has_axis_homed[Z_AXIS]) {
+//		enquecommand_P(PSTR("G28 Z F100")); // home Z
+//	}
 	focalLength = f_length;
 //	float focus = LASER_FOCAL_HEIGHT - f_length;
 	float focus = f_length;
 	char cmd[20];
 
+	enquecommand_P(PSTR("G28 Z F100"));    // home Z
 	sprintf_P(cmd, PSTR("G0 Z%s F100"), ftostr52(focus));
-	enquecommand(cmd);
+	enquecommand(cmd);                     // drop the table
 	enquecommand_P(PSTR("G28 X Y F2000")); // home X/Y
 	enquecommand_P(PSTR("G0 Y16 F2000"));  // move to cut area
 	enquecommand_P(PSTR("M18"));           // disable motors
 	enquecommand_P(PSTR("G92 X0 Y0 Z0"));  // set as origin
+	enquecommand_P(PSTR("M114"));          // print position
 
 }
 #endif
